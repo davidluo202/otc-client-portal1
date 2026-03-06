@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { APP_VERSION } from '../version'
 
 const { t } = useI18n()
 
@@ -80,7 +81,8 @@ async function submit() {
     </main>
 
     <footer class="footer">
-      © {{ new Date().getFullYear() }} {{ t('footer.copyright') }}
+      <div>© {{ new Date().getFullYear() }} {{ t('footer.copyright') }}</div>
+      <div style="margin-top: 6px">v{{ APP_VERSION }}</div>
     </footer>
   </div>
 </template>
