@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { APP_VERSION } from '../version'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const email = ref('')
 const code = ref('')
@@ -146,15 +148,14 @@ async function submit() {
     // auto decide step
     if (step.value === 'passwordLogin') {
       loginWithLocalPassword()
-      alert('密码登录成功（Demo）')
+      router.push('/portal')
       return
     }
 
     if (step.value === 'code') {
       await verifyCode()
       if (hasLocalPassword(e)) {
-        // already has password, allow password login next time
-        alert('验证码登录成功（Demo）')
+        router.push('/portal')
       } else {
         step.value = 'setPassword'
         password.value = ''
@@ -165,10 +166,7 @@ async function submit() {
 
     if (step.value === 'setPassword') {
       saveLocalPassword()
-      alert('密码设置成功（Demo）。下次可用密码登录')
-      step.value = 'passwordLogin'
-      password.value = ''
-      password2.value = ''
+      router.push('/portal')
       return
     }
   } catch (e: any) {

@@ -147,6 +147,155 @@ a { color: inherit; text-decoration: none; }
   font-size: 12px;
 }
 
+/* ===== Portal Layout ===== */
+.portal-page {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background: var(--bg);
+}
+
+.portal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.portal-logo { height: 32px; width: auto; display: block; }
+
+.portal-header-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.portal-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Bottom tab bar */
+.tab-bar {
+  display: flex;
+  background: rgba(255,255,255,0.95);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  flex-shrink: 0;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 6px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 11px;
+  gap: 2px;
+}
+
+.tab-item--active {
+  color: var(--primary);
+}
+
+.tab-icon { font-size: 20px; line-height: 1; }
+.tab-label { line-height: 1; }
+
+/* ===== Module pages ===== */
+.module-page {
+  padding: 14px 14px 80px;
+}
+
+.module-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.card-list { display: flex; flex-direction: column; gap: 10px; }
+
+.holding-card, .rfq-card, .watch-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.holding-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.holding-code { font-weight: 700; font-size: 15px; margin-right: 6px; }
+.holding-name { font-size: 13px; color: var(--muted); }
+
+.holding-pnl { font-size: 15px; font-weight: 700; }
+.pnl-up   { color: #16a34a; }
+.pnl-down { color: #dc2626; }
+
+.holding-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.holding-cell { text-align: center; }
+.cell-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+.cell-val   { font-size: 14px; font-weight: 600; }
+
+/* RFQ */
+.rfq-form { margin-bottom: 6px; padding: 14px; }
+.btn-group { display: flex; gap: 8px; }
+.btn-dir { flex: 1; background: #f3f4f6; color: var(--text); border-color: var(--border); }
+.active-buy  { background: #dcfce7; color: #16a34a; border-color: #86efac; }
+.active-sell { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
+.rfq-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.rfq-meta { font-size: 12px; color: var(--muted); }
+.rfq-status { font-size: 12px; padding: 2px 8px; border-radius: 20px; }
+.status-ok   { background: #dcfce7; color: #16a34a; }
+.status-wait { background: #fef9c3; color: #ca8a04; }
+
+/* Watchlist */
+.watch-chg { font-size: 14px; font-weight: 700; }
+.watch-last { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.btn-remove {
+  background: transparent; border: none; color: var(--muted);
+  font-size: 14px; cursor: pointer; padding: 2px;
+}
+
+.empty-tip {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 40px 0;
+}
+
+/* rfq form card override */
+.rfq-form.card {
+  padding: 14px;
+}
+
 @media (min-width: 768px) {
   .topbar {
     min-height: 120px;
