@@ -237,6 +237,19 @@ async function submit() {
           <template v-else-if="step === 'setPassword'">{{ t('login.submitSetPassword') }}</template>
           <template v-else>{{ t('login.submit') }}</template>
         </button>
+
+        <div style="margin-top: 10px; text-align: center; font-size: 13px; color: var(--muted)">
+          <a
+            v-if="step !== 'passwordLogin' && hasLocalPassword(emailNormalized)"
+            href="#"
+            @click.prevent="step = 'passwordLogin'"
+          >{{ t('login.switchToPassword') }}</a>
+          <a
+            v-else-if="step === 'passwordLogin'"
+            href="#"
+            @click.prevent="step = 'code'"
+          >{{ t('login.switchToCode') }}</a>
+        </div>
       </section>
     </main>
 
