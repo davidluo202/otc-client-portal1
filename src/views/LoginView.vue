@@ -10,6 +10,7 @@ const code = ref('')
 
 const sending = ref(false)
 const secondsLeft = ref(0)
+const challenge = ref<string | null>(null)
 
 const canSend = computed(() => {
   if (sending.value) return false
@@ -21,10 +22,18 @@ async function sendCode() {
   if (!canSend.value) return
   sending.value = true
   try {
-    // TODO: replace with real API call
-    // await fetch('/auth/email/send-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.value.trim() }) })
+    const resp = await fetch('/api/auth/email/send-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.value.trim() }),
+    })
 
-    secondsLeft.value = 60
+    const data = await resp.json()
+    if (!resp.ok) throw new Error(data?.error || 'send failed')
+
+    challenge.value = data.challenge
+
+    secondsLeft.value = Number(data.ttlSeconds) || 90
     const timer = setInterval(() => {
       secondsLeft.value -= 1
       if (secondsLeft.value <= 0) {
@@ -32,15 +41,34 @@ async function sendCode() {
         clearInterval(timer)
       }
     }, 1000)
+  } catch (e: any) {
+    alert(e?.message || '发送失败')
   } finally {
     sending.value = false
   }
 }
 
 async function submit() {
-  // TODO: replace with real API call
-  // await fetch('/auth/email/verify-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.value.trim(), code: code.value.trim() }) })
-  alert(`login: ${email.value} / ${code.value}`)
+  try {
+    if (!challenge.value) throw new Error('请先获取验证码')
+
+    const resp = await fetch('/api/auth/email/verify-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email.value.trim(),
+        code: code.value.trim(),
+        challenge: challenge.value,
+      }),
+    })
+
+    const data = await resp.json()
+    if (!resp.ok) throw new Error(data?.error || 'verify failed')
+
+    alert('登录成功（Demo）')
+  } catch (e: any) {
+    alert(e?.message || '登录失败')
+  }
 }
 </script>
 
