@@ -3,6 +3,9 @@ import { createI18n } from 'vue-i18n'
 const messages = {
   zh: {
     appName: '客户端门户',
+    header: {
+      title: '诚港金融场外服务公司客户端',
+    },
     login: {
       title: '欢迎登录',
       emailLabel: '邮箱',
@@ -21,6 +24,9 @@ const messages = {
   },
   en: {
     appName: 'Client Portal',
+    header: {
+      title: 'Chenggang Financial OTC Services - Client',
+    },
     login: {
       title: 'Sign in',
       emailLabel: 'Email',

@@ -47,11 +47,11 @@ async function submit() {
 <template>
   <div class="page">
     <header class="topbar">
-      <div class="brand">
+      <div class="brand" aria-label="brand">
         <img src="/assets/logo.png" alt="诚港金融（场外）" />
-        <span>{{ t('appName') }}</span>
       </div>
-      <div style="font-size: 12px; color: var(--muted)">CN/EN</div>
+      <div class="topbar-title">{{ t('header.title') }}</div>
+      <div class="topbar-right" aria-label="lang">CN/EN</div>
     </header>
 
     <main class="container">
