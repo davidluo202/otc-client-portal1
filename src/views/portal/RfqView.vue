@@ -22,8 +22,16 @@ const quote = ref<Quote | null>(null)
 
 // ─── RFQ form ─────────────────────────────────────────────────
 const STRUCTURES = ['欧式看涨 (Call)', '欧式看跌 (Put)', '雪球 (Snowball)', '凤凰 (Phoenix)', '鲨鱼鳍 (Shark Fin)', '安全气囊 (Airbag)', '其他']
-const TENORS = ['1个月', '3个月', '6个月', '12个月', '18个月', '24个月']
+const TENORS = ['1个月', '2个月', '3个月', '6个月', '12个月', '18个月', '24个月']
 const CURRENCIES = ['HKD', 'USD', 'CNY', 'EUR']
+
+function detectCurrency(code: string): string {
+  const c = code.trim().toUpperCase()
+  if (c.endsWith(' SH') || c.endsWith('.SS') || c.endsWith(' SZ') || c.endsWith('.SZ')) return 'CNY'
+  if (c.endsWith(' HK') || c.endsWith('.HK')) return 'HKD'
+  if (c.endsWith(' US')) return 'USD'
+  return 'HKD'
+}
 
 const rfq = reactive({
   structure: '',
@@ -70,7 +78,7 @@ async function fetchQuote() {
 
 function goRfq() {
   rfq.structure = ''; rfq.tenor = ''; rfq.ratio = ''; rfq.notional = ''
-  rfq.currency = quote.value?.currency || 'HKD'
+  rfq.currency = detectCurrency(quote.value?.code ?? '')
   step.value = 'rfq'
 }
 
