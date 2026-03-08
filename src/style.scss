@@ -303,6 +303,30 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 14px;
 }
 
+/* Login tabs */
+.login-tabs {
+  display: flex;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+.login-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.login-tab.active {
+  color: #111827;
+  border-bottom-color: #111827;
+}
+
 .chart-tabs {
   display: flex;
   gap: 8px;
