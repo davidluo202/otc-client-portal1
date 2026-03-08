@@ -12,18 +12,29 @@ function json(res: VercelResponse, status: number, body: unknown) {
  */
 function toYahooTicker(raw: string): string {
   const s = raw.trim().toUpperCase()
+
+  // New canonical format (recommended): 600519.SH / 000001.SZ
+  if (s.endsWith('.SH')) return s.replace('.SH', '.SS')
+  if (s.endsWith('.SZ')) return s
+  if (s.endsWith('.HK')) return s
+
+  // Legacy (space separated): 700 HK / AAPL US / 600519 SH
   if (s.endsWith(' HK')) return s.replace(' HK', '.HK')
   if (s.endsWith(' US')) return s.replace(' US', '')
   if (s.endsWith(' SH')) return s.replace(' SH', '.SS')
   if (s.endsWith(' SZ')) return s.replace(' SZ', '.SZ')
+
+  // If user already passes Yahoo symbols (.SS/.SZ/etc), keep
   return s
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') return json(res, 405, { error: 'Method Not Allowed' })
 
-  const raw = String(req.query.code || '').trim()
-  if (!raw) return json(res, 400, { error: 'Missing code' })
+  // Primary contract: /api/market/quote?symbol=600519.SH
+  // Backward compatible: accept ?code=
+  const raw = String(req.query.symbol || req.query.code || '').trim()
+  if (!raw) return json(res, 400, { error: 'Missing symbol' })
 
   const ticker = toYahooTicker(raw)
 
@@ -37,7 +48,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const pr = s.price ?? {}
 
     return json(res, 200, {
-      code: raw.toUpperCase(),
+      code: raw.toUpperCase(), // keep field name for backward compatibility
+      symbol: raw.toUpperCase(),
       ticker,
       name:            pr.longName ?? pr.shortName ?? ticker,
       currency:        pr.currency ?? 'HKD',

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import MarketChart from '../../components/MarketChart.vue'
 
 interface Quote {
   code: string; name: string; currency: string
@@ -19,6 +20,10 @@ const codeInput = ref('')
 const loading = ref(false)
 const quoteError = ref('')
 const quote = ref<Quote | null>(null)
+
+// ─── Chart state ─────────────────────────────────────────────
+type ChartPeriod = 'intraday' | '1d' | '1w' | '1m' | '1y'
+const chartPeriod = ref<ChartPeriod>('intraday')
 
 // ─── RFQ form ─────────────────────────────────────────────────
 const STRUCTURES = ['欧式看涨 (Call)', '欧式看跌 (Put)', '雪球 (Snowball)', '凤凰 (Phoenix)', '鲨鱼鳍 (Shark Fin)', '安全气囊 (Airbag)', '其他']
@@ -64,10 +69,13 @@ async function fetchQuote() {
   quoteError.value = ''
   quote.value = null
   try {
-    const resp = await fetch(`/api/market/quote?code=${encodeURIComponent(code)}`)
+    // Primary contract: /api/market/quote?symbol=000001.SZ
+    // Backward compatible: server may still accept ?code=
+    const resp = await fetch(`/api/market/quote?symbol=${encodeURIComponent(code)}`)
     const data = await resp.json()
     if (!resp.ok) throw new Error(data?.error || '获取行情失败')
     quote.value = data
+    chartPeriod.value = 'intraday'
     step.value = 'quote'
   } catch (e: any) {
     quoteError.value = e?.message || '获取行情失败，请检查标的代码'
@@ -132,14 +140,14 @@ async function submitRfq() {
           <div class="label">标的代码</div>
           <div class="code-row">
             <input class="input" v-model="codeInput"
-              placeholder="如 700 HK · AAPL US · 600519 SH"
+              placeholder="如 600519.SH · 000001.SZ"
               @keyup.enter="fetchQuote" />
             <button class="btn btn-primary" :disabled="loading || !codeInput.trim()" @click="fetchQuote">
               {{ loading ? '查询中…' : '查询行情' }}
             </button>
           </div>
           <div class="helper" v-if="quoteError" style="color:#dc2626">{{ quoteError }}</div>
-          <div class="helper" v-else>支持港股（700 HK）、美股（AAPL US）、A股（600519 SH）</div>
+          <div class="helper" v-else>一期先支持A股：600519.SH / 000001.SZ（港股/美股后续扩展）</div>
         </div>
       </section>
     </template>
@@ -156,6 +164,17 @@ async function submitRfq() {
             <div class="cell-val" style="font-size:22px">{{ fmt(quote.last) }}</div>
             <div class="holding-name">{{ quote.currency }} · {{ quote.marketState }}</div>
           </div>
+        </div>
+
+        <div style="margin:12px 0 10px">
+          <div class="chart-tabs">
+            <button class="tab" :class="{active: chartPeriod==='intraday'}" @click="chartPeriod='intraday'">分时</button>
+            <button class="tab" :class="{active: chartPeriod==='1d'}" @click="chartPeriod='1d'">日K</button>
+            <button class="tab" :class="{active: chartPeriod==='1w'}" @click="chartPeriod='1w'">周K</button>
+            <button class="tab" :class="{active: chartPeriod==='1m'}" @click="chartPeriod='1m'">月K</button>
+            <button class="tab" :class="{active: chartPeriod==='1y'}" @click="chartPeriod='1y'">年K</button>
+          </div>
+          <MarketChart :symbol="quote.code" :period="chartPeriod" />
         </div>
 
         <div class="quote-grid">
